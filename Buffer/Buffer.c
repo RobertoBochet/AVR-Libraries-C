@@ -28,6 +28,10 @@ uint16_t BufferCount(Buffer* buffer)
 	if(buffer->firstElement < buffer->firstSpace) return buffer->firstSpace - buffer->firstElement;//Se il puntatore al primo elemento si trova prima del primo spazio libero restituisco la differenza tra i due
 	else return buffer->size - (buffer->firstElement - buffer->firstSpace);//Se il puntatore al primo elemento di trova dopo il primo spazio libero restituisco la dimensione del buffer meno la differenza tra il puntatore al primo elemento e il primo spazio libero
 }
+uint16_t BufferFreeSpace(Buffer* buffer)
+{
+	return buffer->size - BufferCount(buffer);//Restituisco il complemento di BufferCount
+}
 
 uint8_t BufferPush(Buffer* buffer, uint8_t value)
 {

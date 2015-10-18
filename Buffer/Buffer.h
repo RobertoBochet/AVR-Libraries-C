@@ -16,6 +16,7 @@ uint8_t BufferInit(Buffer*, uint8_t[], uint16_t);//Inizializza il buffer e resti
 uint8_t BufferIsEmpty(Buffer*);//Verifica che il buffer sia vuoto
 uint8_t BufferIsFull(Buffer*);//Verfica che il buffer sia pieno
 uint16_t BufferCount(Buffer*);//Restituisce il numero di elementi presenti nel buffer
+uint16_t BufferFreeSpace(Buffer*);//Restituisce lo spazio disponibile nel buffer
 
 uint8_t BufferPush(Buffer*, uint8_t);//Inserisce un byte nel buffer
 uint8_t BufferPull(Buffer*);//Preleva e restituisce il primo byte inserito (FIFO)
