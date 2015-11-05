@@ -1,5 +1,4 @@
-#ifndef BUFFER_H
-#define BUFFER_H
+#pragma once
 
 #include <avr/io.h>
 
@@ -23,5 +22,3 @@ uint8_t BufferPull(Buffer*);//Preleva e restituisce il primo byte inserito (FIFO
 uint8_t BufferPop(Buffer*);//preleva e restituisce l'ultimo byte inserito (LIFO)
 
 void BufferFlush(Buffer*);//Elimina tutti gli elementi dal buffer
-
-#endif
