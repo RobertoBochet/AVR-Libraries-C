@@ -15,20 +15,20 @@ int main()
 	double ee = 0;
 	
 	EEPROMWrite(0x000, a);
-	EEPROMWriteN(0x010, b, 3);
-	EEPROMWriteN(0x020, (uint8_t*) c, 3*sizeof(uint16_t));
-	EEPROMWriteN(0x030, (uint8_t*) d, 3*sizeof(uint32_t));
-	EEPROMWriteN(0x040, (uint8_t*) &e, sizeof(double));
+	EEPROMWriteArray(0x010, b, 3);
+	EEPROMWriteArray(0x020, (uint8_t*) c, 3*sizeof(uint16_t));
+	EEPROMWriteArray(0x030, (uint8_t*) d, 3*sizeof(uint32_t));
+	EEPROMWriteArray(0x040, (uint8_t*) &e, sizeof(double));
 	
 	aa = EEPROMRead(0x000);
-	EEPROMReadN(0x010, bb, 3);
-	EEPROMReadN(0x020, (uint8_t*) cc, 3*sizeof(uint16_t));
-	EEPROMReadN(0x030, (uint8_t*) dd, 3*sizeof(uint32_t));
-	EEPROMReadN(0x040, (uint8_t*) &ee, sizeof(double));
+	EEPROMReadArray(0x010, bb, 3);
+	EEPROMReadArray(0x020, (uint8_t*) cc, 3*sizeof(uint16_t));
+	EEPROMReadArray(0x030, (uint8_t*) dd, 3*sizeof(uint32_t));
+	EEPROMReadArray(0x040, (uint8_t*) &ee, sizeof(double));
 	
 	EEPROMWrite(0x050, aa);
-	EEPROMWriteN(0x060, bb, 3);
-	EEPROMWriteN(0x070, (uint8_t*) cc, 3*sizeof(uint16_t));
-	EEPROMWriteN(0x080, (uint8_t*) dd, 3*sizeof(uint32_t));
-	EEPROMWriteN(0x090, (uint8_t*) &ee, sizeof(double));
+	EEPROMWriteArray(0x060, bb, 3);
+	EEPROMWriteArray(0x070, (uint8_t*) cc, 3*sizeof(uint16_t));
+	EEPROMWriteArray(0x080, (uint8_t*) dd, 3*sizeof(uint32_t));
+	EEPROMWriteArray(0x090, (uint8_t*) &ee, sizeof(double));
 }

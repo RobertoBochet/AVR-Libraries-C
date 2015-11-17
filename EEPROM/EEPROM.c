@@ -11,7 +11,7 @@ uint8_t EEPROMRead(uint16_t address)
 	
 	return EEDR;//Restituisco il valore letto
 }
-void EEPROMReadN(uint16_t address, uint8_t* pointer, uint16_t n)
+void EEPROMReadArray(uint16_t address, uint8_t array[], uint16_t n)
 {
 	for(; n > 0; n--)
 	{
@@ -22,10 +22,10 @@ void EEPROMReadN(uint16_t address, uint8_t* pointer, uint16_t n)
 		
 		EECR |= (1 << EERE);//Imposto il bit EERE a 1 per avviare la procedura di lettura
 		
-		*pointer = EEDR;//Attribuisco al byte corrente il valore letto
+		*array = EEDR;//Attribuisco al byte corrente il valore letto
 		
 		address++;//Avanzo di un byte nell'indirizzo dell'EEPROM
-		pointer++;//Avanzo di un byte nell'indirizzo del valore da leggere
+		array++;//Avanzo di un byte nell'indirizzo del valore da leggere
 	}
 }
 
@@ -40,7 +40,7 @@ void EEPROMWrite(uint16_t address, uint8_t value)
 	EECR |= (1 << EEMPE);//Imposto il bit EEMPE a 1 per abilitare la scrittura
 	EECR |= (1 << EEPE);//Imposto il bit EEPE a 1 per avviare la procedura di scrittura
 }
-void EEPROMWriteN(uint16_t address, uint8_t* pointer, uint16_t n)
+void EEPROMWriteArray(uint16_t address, uint8_t array[], uint16_t n)
 {
 	for(; n > 0; n--)
 	{
@@ -48,12 +48,12 @@ void EEPROMWriteN(uint16_t address, uint8_t* pointer, uint16_t n)
 		while(SPMCSR & 1);//Attendo che il bit SPMEN venga posto a 0
 		
 		EEAR = address;//Inserisco l'indirizzo dell'EEPROM del byte corrente da scrivere in EEAR
-		EEDR = *pointer;//Inserisco il byte corrente da scrivere in EEDR
+		EEDR = *array;//Inserisco il byte corrente da scrivere in EEDR
 		
 		EECR |= (1 << EEMPE);//Imposto il bit EEMPE a 1 per abilitare la scrittura
 		EECR |= (1 << EEPE);//Imposto il bit EEPE a 1 per avviare la procedura di scrittura
 		
 		address++;//Avanzo di un byte nell'indirizzo dell'EEPROM
-		pointer++;//Avanzo di un byte nell'indirizzo del valore da scrivere
+		array++;//Avanzo di un byte nell'indirizzo del valore da scrivere
 	}
 }
