@@ -10,15 +10,15 @@ typedef struct
 	uint8_t* firstSpace;//Puntatore al primo spazio libero
 } Buffer;
 
-uint8_t BufferInit(Buffer*, uint8_t[], uint16_t);//Inizializza il buffer e restituisce 1 se l'operazione è riuscita
+void BufferInit(Buffer*, uint8_t[], uint16_t);//(buffer, array, size)//Inizializza il buffer {buffer} con l'array di byte {array} di dimensione {size}
 
-uint8_t BufferIsEmpty(Buffer*);//Verifica che il buffer sia vuoto
-uint8_t BufferIsFull(Buffer*);//Verfica che il buffer sia pieno
-uint16_t BufferCount(Buffer*);//Restituisce il numero di elementi presenti nel buffer
-uint16_t BufferFreeSpace(Buffer*);//Restituisce lo spazio disponibile nel buffer
+uint8_t BufferIsEmpty(Buffer*);//(buffer)//Verifica che il buffer {buffer} sia vuoto
+uint8_t BufferIsFull(Buffer*);//(buffer)//Verfica che il buffer {buffer} sia pieno
+uint16_t BufferCount(Buffer*);//(buffer)//Restituisce il numero di elementi presenti nel buffer {buffer}
+uint16_t BufferFreeSpace(Buffer*);//(buffer)//Restituisce lo spazio disponibile nel buffer {buffer}
 
-uint8_t BufferPush(Buffer*, uint8_t);//Inserisce un byte nel buffer
-uint8_t BufferPull(Buffer*);//Preleva e restituisce il primo byte inserito (FIFO)
-uint8_t BufferPop(Buffer*);//preleva e restituisce l'ultimo byte inserito (LIFO)
+uint8_t BufferPush(Buffer*, uint8_t);//(buffer, value)//Inserisce nel buffer {buffer} il byte {value}
+uint8_t BufferPull(Buffer*);//(buffer)//preleva dal buffer {buffer} il byte meno recente e lo restituisce (FIFO)
+uint8_t BufferPop(Buffer*);//(buffer)//preleva dal buffer {buffer} il byte piu recente e lo restituisce (LIFO)
 
-void BufferFlush(Buffer*);//Elimina tutti gli elementi dal buffer
+void BufferFlush(Buffer*);//(buffer)//Svuota il buffer {buffer}

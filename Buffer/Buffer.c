@@ -1,15 +1,11 @@
 #include "Buffer.h"
 #include <stdlib.h>
 
-uint8_t BufferInit(Buffer* buffer, uint8_t array[], uint16_t size)
-{
-	if(buffer == NULL || array == NULL || size == 0) return 0;//Se buffer o array puntano a NULL oppure la dimensione dell'array è uguale a 0 restituisco false
-	
+void BufferInit(Buffer* buffer, uint8_t array[], uint16_t size)
+{	
 	buffer->size = size;//Imposto la variabile che indica le dimensioni del buffer
 	buffer->array = buffer->firstSpace = array;//Imposto il puntatore all'array e al primo spazio libero
 	buffer->firstElement = NULL;//Imposto il puntatore al primo elemento a NULL
-	
-	return 1;//Restituisco 1 per segnalare l'inizailizzazione riuscita
 }
 
 uint8_t BufferIsEmpty(Buffer* buffer)
