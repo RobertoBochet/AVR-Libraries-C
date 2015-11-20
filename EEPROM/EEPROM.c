@@ -40,7 +40,7 @@ void EEPROMWrite(uint16_t address, uint8_t value)
 	EECR |= (1 << EEMPE);//Imposto il bit EEMPE a 1 per abilitare la scrittura
 	EECR |= (1 << EEPE);//Imposto il bit EEPE a 1 per avviare la procedura di scrittura
 }
-void EEPROMWriteArray(uint16_t address, uint8_t array[], uint16_t n)
+void EEPROMWriteArray(uint16_t address, const uint8_t array[], uint16_t n)
 {
 	for(; n > 0; n--)
 	{

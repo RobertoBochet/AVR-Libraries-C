@@ -10,7 +10,7 @@ int main()
 	uint8_t d = 0;
 	uint16_t e[3];
 	
-	UARTInit(103, rxBufferArray, 32, txBufferArray, 16);//UBRR for F_CPU 8MHz Baud 9600
+	UARTInit(103, rxBufferArray, 32, txBufferArray, 16);//UBRR for F_CPU 8MHz Baud 9600 double speed
 	UARTDoubleSpeedEnabled();
 	
 	UARTTxArray((uint8_t*) &a, sizeof(uint32_t));
@@ -22,4 +22,6 @@ int main()
 	
 	while(UARTRxAvailable() < 3 * sizeof(uint16_t));
 	UARTRxArray((uint8_t*) e, 3 * sizeof(uint16_t));
+	
+	UARTTxString("End");
 }
