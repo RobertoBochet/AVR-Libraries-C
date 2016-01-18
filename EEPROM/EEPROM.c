@@ -1,6 +1,6 @@
 #include "EEPROM.h" 
 
-uint8_t EEPROMRead(uint16_t address)
+char EEPROMRead(uint16_t address)
 {
 	while(EECR & (1 << EEPE));//Attendo che il bit EEPE venga posto a 0 per segnalare che non vi sono procedure in corso sull'EEPROM
 	while(SPMCSR & 1);//Attendo che il bit SPMEN venga posto a 0
@@ -11,7 +11,7 @@ uint8_t EEPROMRead(uint16_t address)
 	
 	return EEDR;//Restituisco il valore letto
 }
-void EEPROMReadArray(uint16_t address, uint8_t array[], uint16_t n)
+void EEPROMReadArray(uint16_t address, char array[], uint16_t n)
 {
 	for(; n > 0; n--)
 	{
@@ -29,7 +29,7 @@ void EEPROMReadArray(uint16_t address, uint8_t array[], uint16_t n)
 	}
 }
 
-void EEPROMWrite(uint16_t address, uint8_t value)
+void EEPROMWrite(uint16_t address, char value)
 {
 	while(EECR & (1 << EEPE));//Attendo che il bit EEPE venga posto a 0 per segnalare che non vi sono procedure in corso sull'EEPROM
 	while(SPMCSR & 1);//Attendo che il bit SPMEN venga posto a 0
@@ -40,7 +40,7 @@ void EEPROMWrite(uint16_t address, uint8_t value)
 	EECR |= (1 << EEMPE);//Imposto il bit EEMPE a 1 per abilitare la scrittura
 	EECR |= (1 << EEPE);//Imposto il bit EEPE a 1 per avviare la procedura di scrittura
 }
-void EEPROMWriteArray(uint16_t address, const uint8_t array[], uint16_t n)
+void EEPROMWriteArray(uint16_t address, const char array[], uint16_t n)
 {
 	for(; n > 0; n--)
 	{

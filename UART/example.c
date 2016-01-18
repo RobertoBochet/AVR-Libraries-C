@@ -1,4 +1,7 @@
+#include "UBRR.h"
 #include "UART.h"
+
+#define UBRR _UBRR(8, 9600, 1)//UBRR for F_CPU 8MHz Baud 9600 double speed
 
 int main()
 {
@@ -10,7 +13,7 @@ int main()
 	uint8_t d = 0;
 	uint16_t e[3];
 	
-	UARTInit(103, rxBufferArray, 32, txBufferArray, 16);//UBRR for F_CPU 8MHz Baud 9600 double speed
+	UARTInit(UBRR, rxBufferArray, 32, txBufferArray, 16);
 	UARTDoubleSpeedEnabled();
 	
 	UARTTxArray((uint8_t*) &a, sizeof(uint32_t));

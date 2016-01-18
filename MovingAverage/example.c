@@ -3,8 +3,8 @@
 int main()
 {
 	float smaArray[5], wmaArray[5];
-	SMA sma;
-	WMA wma;
+	SMA_t sma;
+	WMA_t wma;
 	float a = 0;
 	
 	SMAInit(&sma, smaArray, 5);

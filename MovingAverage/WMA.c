@@ -1,12 +1,12 @@
 #include "MovingAverage.h"
 
-void WMAInit(WMA* wma, float array[], uint32_t size)
+void WMAInit(WMA_t* wma, float array[], uint32_t size)
 {
 	wma->oldestElement = wma->beginningArray = array;//Imposto i puntatori all'inizio dell'array e all'elemento meno recente con l'inizio dell'array fornito
 	wma->endArray = array + size - 1;//Imposto il puntatore alla fine dell'array attraverso l'inizio dell'array fornito
 	wma->elements = 0;//Imposto a 0 il numero di elementi della media
 }
-void WMAAdd(WMA* wma, float value)
+void WMAAdd(WMA_t* wma, float value)
 {
 	if(wma->beginningArray + wma->elements - 1 != wma->endArray) wma->elements++;//Se l'array non è pieno incremento di uno gli elementi che compongono la media
 	
@@ -15,7 +15,7 @@ void WMAAdd(WMA* wma, float value)
 	if(wma->oldestElement == wma->endArray) wma->oldestElement = wma->beginningArray;//Se l'elemento aggiornato era l'ultimo dell'array fisico porto il puntatore all'elemento meno recente all'inizio dell'array
 	else wma->oldestElement++;//In caso contrario porto il puntatore all'elemento meno recente al successivo elemento
 }
-float WMAGet(WMA* wma)
+float WMAGet(WMA_t* wma)
 {
 	float* currentElement;//Crreo un puntatore per il valore corrente della somma
 	double sum = 0;//Creo una variabile per la somma ponderata e la imposto a 0
@@ -33,7 +33,7 @@ float WMAGet(WMA* wma)
 	}
 	return sum / divisor;//Restituisco la media ponderata
 }
-void WMAClear(WMA* wma)
+void WMAClear(WMA_t* wma)
 {
 	wma->oldestElement = wma->beginningArray;//reimposto il valore piu vecchio al primo elemento dell'array
 	wma->elements = 0;//Reimposto a 0 il numero degli elementi della media e la somma degli stessi

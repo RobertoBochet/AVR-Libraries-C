@@ -3,7 +3,7 @@
 int main()
 {
 	uint8_t bufferArray[32];
-	Buffer buffer;
+	Buffer_t buffer;
 	
 	uint8_t a = 0;
 	uint16_t b = 0;
@@ -30,7 +30,7 @@ int main()
 	BufferPush(&buffer, 145);
 	BufferPush(&buffer, 18);
 	
-	b = BufferCount(&buffer);//3
+	b = BufferCount(&buffer);//4
 	
 	a = BufferPull(&buffer);//211
 	a = BufferPop(&buffer);//18

@@ -2,18 +2,18 @@
 #include <avr/interrupt.h>
 #include "../Buffer/Buffer.h"
 
-Buffer UARTRxBuffer;//Buffer di ricezione
-Buffer UARTTxBuffer;//Buffer di trasmissione
+Buffer_t UARTRxBuffer;//Buffer di ricezione
+Buffer_t UARTTxBuffer;//Buffer di trasmissione
 
-inline void UARTRxInterruptEnabled();//Abilita l'interrupt per la ricezione di un byte
-inline void UARTRxInterruptDisabled();//Disabilita l'interrupt per la ricezione di un byte
-inline void UARTTxInterruptEnabled();//Abilita l'interrupt per la conclusione di invio di un byte
-inline void UARTTxInterruptDisabled();//Disabilita l'interrupt per la conclusione di invio di un byte
+static inline void UARTRxInterruptEnabled() { UCSR0B |= 1 << RXCIE0; }
+static inline void UARTRxInterruptDisabled() { UCSR0B &= ~(1 << RXCIE0); }
+static inline void UARTTxInterruptEnabled() { UCSR0B |= 1 << TXCIE0; }
+static inline void UARTTxInterruptDisabled() { UCSR0B &= ~(1 << TXCIE0); }
+	
+static inline void UARTReceiveData();//Inizia la ricezione di un byte
+static inline void UARTSendData();//Inizia la trasmissione di un byte
 
-inline void UARTReceiveData();//Inizia la ricezione di un byte
-inline void UARTSendData();//Inizia la trasmissione di un byte
-
-void UARTInit(uint16_t ubrr, uint8_t RxBufferArray[], uint8_t RxBufferArraySize, uint8_t TxBufferArray[], uint8_t TxBufferArraySize)
+void UARTInit(uint16_t ubrr, void* RxBufferArray, uint8_t RxBufferArraySize, void* TxBufferArray, uint8_t TxBufferArraySize)
 {
 	UCSR0B = (1<<RXEN0) | (1<<TXEN0); //Abilito il pin di ricezione e il pin di trasmissione
 	UCSR0C = (1<<UCSZ01) | (1<<UCSZ00);//Imposto a 8 la lunghezza in bit di un carattere
@@ -29,57 +29,26 @@ void UARTInit(uint16_t ubrr, uint8_t RxBufferArray[], uint8_t RxBufferArraySize,
 	sei();//Abilito gli interrupt globali
 }
 
-inline void UARTSetUBRR(uint16_t ubrr)
-{
-	UBRR0H = ubrr >> 8;
-	UBRR0L = ubrr;
-}
-
-inline void UARTDoubleSpeedEnabled()
-{
-	UCSR0A |= 1 << U2X0;
-}
-inline void UARTDoubleSpeedDisabled()
-{
-	UCSR0A &= ~(1 << U2X0);
-}
-
-inline void UARTRxInterruptEnabled()
-{
-	UCSR0B |= 1 << RXCIE0;
-}
-inline void UARTRxInterruptDisabled()
-{
-	UCSR0B &= ~(1 << RXCIE0);
-}
-inline void UARTTxInterruptEnabled()
-{
-	UCSR0B |= 1 << TXCIE0;
-}
-inline void UARTTxInterruptDisabled()
-{
-	UCSR0B &= ~(1 << TXCIE0);
-}
-
 uint8_t UARTRxAvailable()
 {
 	return BufferCount(&UARTRxBuffer);//Restituisco il numero di byte presenti nel buffer di ricezione
 }
 
-uint8_t UARTRx()
+char UARTRx()
 {
 	return BufferPull(&UARTRxBuffer);//Restituisco il primo byte ricevuto
 }
-void UARTRxArray(uint8_t array[], uint16_t n)
+void UARTRxArray(void* array, uint16_t n)
 {
-	for(; n != 0; n--)//Eseguo il ciclo per il numero di byte da copiare
+	while(n != 0)//Eseguo il ciclo per il numero di byte da copiare
 	{
-		*array = BufferPull(&UARTRxBuffer);//Prelevo e inserisco il byte ricevuto meno recente nell'array 
+		*(char*)array = BufferPull(&UARTRxBuffer);//Prelevo e inserisco il byte ricevuto meno recente nell'array 
 		array++;//Sposto il puntatore all'array avanti di un byte
+		n--;//Decremento il numero di byte ancora da copiare
 	}
 }
 
-void UARTTx(uint8_t value)
+void UARTTx(char value)
 {
 	while(BufferFreeSpace(&UARTTxBuffer) == 0);//Attendo che nel buffer di trasmisione vi sia almeno un byte libero
 		
@@ -93,47 +62,51 @@ void UARTTx(uint8_t value)
 }
 void UARTTxString(const char* s)
 {
-	do {
+	while(*s != '\0')//Rieseguo il ciclo se non è stato ancora incontrato il carattere '\0' di fine stringa
+	{
 		while(!BufferIsEmpty(&UARTTxBuffer));//Attendo che il buffer sia completamente vuoto
 		
 		UARTTxInterruptDisabled();//Disabilito l'interrupt per la conclusione di invio di un byte
 		
-		do {
+		while(*s != '\0' && !BufferIsFull(&UARTTxBuffer))//Continuo fintanto che il carattere corrente è il carattere '\0' di fine stringa o il buffer di trasmissione sia pieno
+		{
 			BufferPush(&UARTTxBuffer, *s);//Inserisco il carattere corrente nel buffer di trasmissione
 			s++;//Faccio avanzare di un carattere il puntatore al carattere corrente
-		} while(*s != '\0' && !BufferIsFull(&UARTTxBuffer));//Continuo fintanto che il carattere corrente è il carattere '\0' di fine stringa o il buffer di trasmissione sia pieno
+		}
 		
 		UARTTxInterruptEnabled();//Abilito l'interrupt per la conclusione di invio di un byte
 		
 		UARTSendData();//Rinizio la procedura di invio dei dati
-	} while(*s != '\0');//Rieseguo il cilco se non è stato ancora incontrato il carattere '\0' di fine stringa
+	} 
 }
-void UARTTxArray(const uint8_t array[], uint16_t n)
+void UARTTxArray(const void* array, uint16_t n)
 {
-	do {		
+	while(n != 0)//Rieseguo il ciclo se rimangono ancora byte da inviare
+	{		
 		while(BufferFreeSpace(&UARTTxBuffer) < n && !BufferIsEmpty(&UARTTxBuffer));//Attendo che nel buffer vi sia spazio sufficiente per tutti i byte o che sia completamente vuoto
 		
 		UARTTxInterruptDisabled();//Disabilito l'interrupt per la conclusione di invio di un byte
 		
-		do {
-			BufferPush(&UARTTxBuffer, *array);//Inserisco il byte corrente nel buffer di trasmissione
+		while(n != 0 && !BufferIsFull(&UARTTxBuffer))//Continuo fintanto che i byte ancora da inviare siano finiti o il buffer di trasmissione sia pieno
+		{
+			BufferPush(&UARTTxBuffer, *(char*)array);//Inserisco il byte corrente nel buffer di trasmissione
 			n--;//Diminuisco di uno i byte da dover ancora inviare
 			array++;//Sposto di un byte in avanti il puntatore al byte corrente
-		} while(n != 0 && !BufferIsFull(&UARTTxBuffer));//Continuo fintanto che i byte ancora da inviare siano finiti o il buffer di trasmissione sia pieno
+		}
 		
 		UARTTxInterruptEnabled();//Abilito l'interrupt per la conclusione di invio di un byte
 		
 		UARTSendData();//Rinizio la procedura di invio dei dati
-	} while(n != 0);//Rieseguo il cilco se rimangono ancora byte da inviare
+	}
 }
 
-inline void UARTReceiveData()
+static inline void UARTReceiveData()
 {
-	uint8_t waste;//Alloco un byte in caso dovessi eliminare dei dati
+	char waste;//Alloco un byte in caso dovessi eliminare dei dati
 	if(BufferIsFull(&UARTRxBuffer)) waste = UDR0;//Se il Buffer di ricezione è pieno scarto il valore ricevuto
 	else BufferPush(&UARTRxBuffer, UDR0);//Altrimenti inserisco il byte ricevuto nel buffer di ricezione
 }
-inline void UARTSendData()
+static inline void UARTSendData()
 {
 	if(!BufferIsEmpty(&UARTTxBuffer))//Verifico che il buffer di trasmissione non sia vuoto
 	{
