@@ -2,7 +2,7 @@
 
 #include <avr/io.h>
 
-typedef struct sma_t
+typedef struct
 {
 	float* beginningArray;//Puntatore al primo elemento dell'array
 	float* endArray;//Puntatore all'ultimo elemento dell'array
@@ -17,7 +17,7 @@ float SMAGet(SMA_t*);//(sma)//Restituisce la media di {sma}
 void SMAClear(SMA_t*);//(sma)//Resetta la media di {sma}
 
 
-typedef struct wma_t
+typedef struct
 {
 	float* beginningArray;//Puntatore al primo elemento dell'array
 	float* endArray;//Puntatore all'ultimo elemento dell'array
